@@ -16,7 +16,7 @@ namespace Exert
         public string Name { get; private set; }
         public LuceneVersion Version { get; private set; }
         public string Folder { get; private set; }
-        public Analyzer Analyzer { get; private set; }
+        public SmartChineseAnalyzer Analyzer { get; private set; }
         public IndexWriterConfig WriterConfig { get; private set; }
         public FSDirectory Directory { get; private set; }
         public IndexWriter Writer { get; private set; }

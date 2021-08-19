@@ -5,7 +5,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Index;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
-using Lucene.Net.Analysis.Cn.Smart;
+using Lucene.Net.Analysis.TokenAttributes;
 
 namespace Exert
 {
@@ -20,13 +20,17 @@ namespace Exert
                 info = "目击证人，上海人。",
                 age = 65,
             });
-            var hits = engine.Search(new MultiPhraseQuery
+            var query = new MultiPhraseQuery();
+            using var ts = engine.Analyzer.GetTokenStream("info", "上海人");
+            ts.Reset();
+            while (ts.IncrementToken())
             {
-                // new Term("info", "上海"),
-                new Term("info", "北京"),
-                new Term("info", "本地"),
-                new Term("info", "人"),
-            }, 20).ScoreDocs;
+                var i = ts.GetAttribute<ICharTermAttribute>();
+                Console.WriteLine(i.ToString());
+                query.Add(new Term("info", i.ToString()));
+            }
+            
+            var hits = engine.Search(query, 20).ScoreDocs;
             Console.WriteLine($"hits: {hits.Length}");
             foreach (var hit in hits)
             {
